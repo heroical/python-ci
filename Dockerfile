@@ -1,7 +1,10 @@
 FROM hub.c.163.com/public/centos:6.5
-MAINTAINER whp@whp
-RUN rm -rf /root/test1/
-RUN mkdir /root/test1/
-COPY . /root/test1/
-RUN python /root/test1/test.py
-ENTRYPOINT /usr/sbin/sshd -D
+MAINTAINER Heroical
+RUN yum install lrzsz -y
+RUN yum install python -y
+RUN mkdir -p /test/heroical
+RUN touch /test/heroical/text.txt
+#CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D"]
+
+
