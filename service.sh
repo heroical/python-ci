@@ -1,7 +1,7 @@
 #!/bin/bash
 #set -x
 #获取 token
-ans=$(curl -s -X POST -H "Content-Type: application/json" -d '{  "app_key": "fbfa832dee2b434582cf726078976543",  "app_secret": "495567f8becd457e971937133579a36b"}' "https://open.c.163.com/api/v1/token")
+ans=$(curl -s -X POST -H "Content-Type: application/json" -d '{  "app_key": "20be823cfcd8459f944e9c189224e7c1",  "app_secret": "f01b808ab20a40e192a98cb437a989fe"}' "https://open.c.163.com/api/v1/token")
 token=`echo $ans | awk -F ',' '{print $1}' | awk -F ':' '{print $2}' | sed 's/^.//' | sed 's/.$//'`
 echo "token: $token"
 
