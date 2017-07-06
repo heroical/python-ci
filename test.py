@@ -4,6 +4,6 @@ ans = os.path.isfile("/root/a.log")
 if ans:
   print "file exists, OK !"
 else:
-  print "error !"
+  print "error !!!!"
 
 
