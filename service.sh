@@ -1,6 +1,7 @@
 #!/bin/bash
-#set -x
-#获取 token
+# 需要修改 app_key、app_secret为自己的accesskey和secretkey
+# 需要修改 image_path 中用户名和仓库名为自己的用户名，仓库名为自己与git绑定的仓库名。
+
 ans=$(curl -s -X POST -H "Content-Type: application/json" -d '{  "app_key": "20be823cfcd8459f944e9c189224e7c1",  "app_secret": "f01b808ab20a40e192a98cb437a989fe"}' "https://open.c.163.com/api/v1/token")
 token=`echo $ans | awk -F ',' '{print $1}' | awk -F ':' '{print $2}' | sed 's/^.//' | sed 's/.$//'`
 echo "token: $token"
@@ -16,9 +17,9 @@ echo "image status: $status"
 #获取新镜像版本号。可以考虑记录上次的最新镜像版本，与本次的镜像版本对比，判断是否是最新的镜像。
 image_tag=$(curl -s -X GET -H "Authorization: Token ${token}" -H "Content-Type: application/json" "https://open.c.163.com/api/v1    /repositories/${repos_id}" | awk -F ':' '{print $3}' | awk -F ',' '{print $1}') # | sed 's/^.//' | sed 's/.$//')
 echo "image_tag: $image_tag"
+
 image_tag2=$(echo $image_tag | sed 's/^.//' | sed 's/.$//')
 echo "image_tag2: $image_tag2"
-#echo "hub.c.163.com/wanghongpeng0102/test:${image_tag2}"
 
 #镜像未创建完成时
 while true;do
@@ -46,7 +47,7 @@ sleep 2
 
 #创建密钥并获取密钥名称，本示例密钥名称为镜像tag
 key=$(curl -s -X POST -H "Authorization: Token ${token}" -H "Content-Type: application/json" -d '{"key_name": '$image_tag'}' "https://open.c.163.com/api/v1/secret-keys")
-#echo "key: $key"
+echo "key: $key"
 
 #获取密钥列表
 #curl -X GET -H "Authorization: Token ${token}" -H "Content-Type: application/json" "https://open.c.163.com/api/v1/secret-keys" &>/dev/null
@@ -61,28 +62,28 @@ if [ $status -eq 2 ];then
     "bill_info":"default",
         "service_info": {
         "namespace_id": '$namespace_id',
-        "stateful": "1",
-        "replicas": 1,
+        "stateful": 1,  
+        "replicas": 1,  
         "service_name": '$image_tag',
         "port_maps": [
             {
-                "dest_port": "80",
-                "source_port": "8080",
+                "target_port": "80",
+                "port": "8080",
                 "protocol": "TCP"
             }
         ],
-        "spec_id": 1,
+        "spec_alias": "C1M2S20",
         "state_public_net": {
             "used": true,
-            "type": "flow",
-            "bandwidth": 20
+            "type": "flow",  
+            "bandwidth": 20  
         },
         "disk_type": 0,
         "ip_id": '$ip_uuid'
     },
     "service_container_infos": [
         {
-            "image_path": "hub.c.163.com/wanghongpeng0102/test:'$image_tag2'",
+            "image_path": "hub.c.163.com/dangernear/ci:'$image_tag2'",
             "container_name": '$image_tag',
             "command": "",
             "envs": [
@@ -101,13 +102,13 @@ if [ $status -eq 2 ];then
             "cpu_weight": 100,
             "memory_weight": 100,
             "ssh_keys": [
-                "miyao6",'$image_tag'
+                '$image_tag'
             ],
-            "local_disk_info": [],
             "volume_info": {
-                "'$disk_id'": "/data/"
-            }
+                "'$disk_id'": "/mnt/"
+            }  
         }
-    ]
+    ] 
+
 }' "https://open.c.163.com/api/v1/microservices")
 fi
